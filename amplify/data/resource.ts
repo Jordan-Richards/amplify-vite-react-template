@@ -1,17 +1,17 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 /*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any user authenticated via an API key can "create", "read",
-"update", and "delete" any "Todo" records.
+The section below creates a Todo database table with a "content" field and a "userId" field.
+The authorization rule below specifies that only the owner can "create", "read",
+"update", and "delete" their own "Todo" records.
 =========================================================================*/
 const schema = a.schema({
   Todo: a
     .model({
       content: a.string(),
+      userId: a.string(),
     })
-    .authorization((allow) => [allow.publicApiKey()]),
+    .authorization((allow) => [allow.owner()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -19,13 +19,44 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
+    defaultAuthorizationMode: 'userPool',
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
     },
   },
 });
+
+///////////////////////////////////////////////////////////////////////////                 Original Code                  ////////////////////////////////
+//import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+
+/*== STEP 1 ===============================================================
+The section below creates a Todo database table with a "content" field. Try
+adding a new "isDone" field as a boolean. The authorization rule below
+specifies that any user authenticated via an API key can "create", "read",
+"update", and "delete" any "Todo" records.
+=========================================================================*/
+////////////////////                                                            UNCOMMENT UNTIL STEP 2 TO RUN THE ORIGINAL CODE      //////////////////////////
+// const schema = a.schema({
+//   Todo: a
+//     .model({
+//       content: a.string(),
+//     })
+//     .authorization((allow) => [allow.owner()]),
+// });
+
+// export type Schema = ClientSchema<typeof schema>;
+
+// export const data = defineData({
+//   schema,
+//   authorizationModes: {
+//     defaultAuthorizationMode: 'userPool',
+//     // API Key is used for a.allow.public() rules
+//     apiKeyAuthorizationMode: {
+//       expiresInDays: 30,
+//     },
+//   },
+// });
 
 /*== STEP 2 ===============================================================
 Go to your frontend source code. From your client-side code, generate a
